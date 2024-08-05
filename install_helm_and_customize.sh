@@ -1,8 +1,6 @@
 #install helm on a virtualenv
+source hyperbee-eval-venv/bin/activate
 cd helm
-python3 -m pip install virtualenv
-python3 -m virtualenv -p python3.8 helm-venv
-source helm-venv/bin/activate
 pip install crfm-helm
 
 cd ..

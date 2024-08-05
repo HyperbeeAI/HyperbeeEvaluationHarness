@@ -1,48 +1,49 @@
 from enum import Enum
 from helm_evaluator import HelmEvaluator
+from lm_eval_harness_evaluator import LMEvalHarnessEvaluator
+from mtbench_evaluator import MTBenchEvaluator
 class Evaluators(Enum):
     HELM = "helm"
     LM_EVAL_HARNESS = "lm_eval_harness"
     MTBENCH = "mtbench"
 
-class LmEvalHarnessEvaluator:
-    def evaluate(self, model_names, benchmark_name):
-        # Placeholder for actual evaluation logic
-        return ["result1"]
-
-class MTBenchEvaluator:
-    def evaluate(self, model_names, benchmark_name):
-        # Placeholder for actual evaluation logic
-        return ["result2"]
 class HyberbeeEvaluator:
     def __init__(self):
         self.helm_evaluator = HelmEvaluator()
-        self.harness_evaluator = LmEvalHarnessEvaluator()
+        self.harness_evaluator = LMEvalHarnessEvaluator()
         self.mtbench_evaluator = MTBenchEvaluator()
     
-    def evaluate(self, model_names, evaluator_benchmark_pairs):
+    def evaluate(self, model_names, evaluator_benchmark_pairs, kwargs_helm=None, kwargs_lm_eval_harness=None, kwargs_mt_bench=None):
         results = {}
         
+        helm_benchmarks = []
+        lm_eval_harness_benchmarks = []
+        mtbench_benchmarks = []
+
         for pair in evaluator_benchmark_pairs:
             try:
-                evaluator_name, benchmark_name = pair.split('/')
-                evaluator = self._get_evaluator(evaluator_name)
-                results[pair] = evaluator.evaluate(model_names, benchmark_name)
+                if 'mt-bench' in pair:
+                    mtbench_benchmarks.append(benchmark_name)
+                else:
+                    evaluator_name, benchmark_name = pair.split('/')
+                    if evaluator_name == Evaluators.HELM.value:
+                        helm_benchmarks.append(benchmark_name)
+                    elif evaluator_name == Evaluators.LM_EVAL_HARNESS.value:
+                        lm_eval_harness_benchmarks.append(benchmark_name)
+                    else:
+                        raise ValueError(f"Invalid evaluator specified: {evaluator_name}")
             except ValueError:
                 raise ValueError(f"Invalid format: {pair}. Expected format: <evaluator>/<benchmark_name>")
-            except KeyError:
-                raise ValueError(f"Invalid evaluator specified: {evaluator_name}")
-        
+
+        # Evaluate benchmarks for each evaluator
+        if helm_benchmarks:
+            results['HELM'] = self.helm_evaluator.evaluate(model_names, helm_benchmarks, kwargs_helm)
+        if lm_eval_harness_benchmarks:
+            results['LM_EVAL_HARNESS'] = self.harness_evaluator.evaluate(model_names, lm_eval_harness_benchmarks, kwargs_lm_eval_harness)
+        if mtbench_benchmarks:
+            results['MTBENCH'] = self.mtbench_evaluator.evaluate(model_names, kwargs_mt_bench)
+
         return results
-    
-    def _get_evaluator(self, evaluator_name):
-        if evaluator_name == Evaluators.HELM.value:
-            return self.helm_evaluator
-        elif evaluator_name == Evaluators.LM_EVAL_HARNESS.value:
-            return self.harness_evaluator
-        elif evaluator_name == Evaluators.MTBENCH.value:
-            return self.mtbench_evaluator
-        else:
-            raise KeyError(evaluator_name)
+            
 
 

@@ -4,4 +4,4 @@ cd helm
 pip install crfm-helm
 
 cd ..
-cp -r my_helm/ helm/
+cp -rf my_helm/* helm/

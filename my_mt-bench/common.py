@@ -20,7 +20,10 @@ API_RETRY_SLEEP = 10
 API_ERROR_OUTPUT = "$ERROR$"
 
 TIE_DELTA = 0.1
-
+client = openai.OpenAI(
+    # defaults to os.environ.get("OPENAI_API_KEY")
+    api_key=os.environ.get("OPENAI_API_KEY")
+)
 # Categories that need reference answers
 NEED_REF_CATS = ["math", "reasoning", "coding", "arena-hard-200"]
 
@@ -135,17 +138,18 @@ def run_judge_single(question, answer, judge, ref_answer, multi_turn=False):
             kwargs["ref_answer_2"] = ref_answer["choices"][0]["turns"][1]
 
     if multi_turn:
+        print(answer)
         user_prompt = judge.prompt_template["prompt_template"].format(
             question_1=question["turns"][0],
             question_2=question["turns"][1],
-            answer_1=answer["choices"][0]["turns"][0],
-            answer_2=answer["choices"][0]["turns"][1],
+            answer_1=answer["choices"][0],
+            answer_2=answer["choices"][1],
             **kwargs,
         )
     else:
         user_prompt = judge.prompt_template["prompt_template"].format(
             question=question["turns"][0],
-            answer=answer["choices"][0]["turns"][0],
+            answer=answer["choices"][0],
             **kwargs,
         )
 
@@ -398,16 +402,16 @@ def chat_completion_openai(model, messages, temperature, max_tokens, api_dict=No
     output = API_ERROR_OUTPUT
     for _ in range(API_MAX_RETRY):
         try:
-            response = openai.ChatCompletion.create(
+            response = client.chat.completions.create(
                 model=model,
                 messages=messages,
                 n=1,
                 temperature=temperature,
                 max_tokens=max_tokens,
             )
-            output = response["choices"][0]["message"]["content"]
+            output = response.choices[0].message.content.strip()
             break
-        except openai.error.OpenAIError as e:
+        except openai.OpenAIError as e:
             print(type(e), e)
             time.sleep(API_RETRY_SLEEP)
 

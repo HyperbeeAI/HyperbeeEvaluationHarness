@@ -210,7 +210,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     question_file = f"my_mt-bench/question.jsonl"
-    answer_dir = f"my_mt-bench/model_answer"
+    answer_dir = f"my_mt-bench/model_answers"
     ref_answer_dir = f"my_mt-bench/ref_answer"
 
     # Load questions

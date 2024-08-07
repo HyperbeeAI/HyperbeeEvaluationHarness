@@ -7,7 +7,8 @@ default_step2_template="USER: {instruction} ASSISTANT:"
 def doc_to_text1(doc):
     template = default_step1_template
     return template.replace('{instruction}', doc['turns'][0])
-
+def doc_to_target(doc):
+    return ""
 def process_results1(doc,generations):
     try:
         with open(step_one_results_fname, 'rb') as handle:

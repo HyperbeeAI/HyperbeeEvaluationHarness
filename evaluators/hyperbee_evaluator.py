@@ -7,8 +7,9 @@ class Evaluators(Enum):
     HELM = "helm"
     LM_EVAL_HARNESS = "lm_eval_harness"
     MTBENCH = "mtbench"
+    FLASK = "flask"
 
-class HyberbeeEvaluator:
+class HyperbeeEvaluator:
     def __init__(self):
         self.helm_evaluator = HelmEvaluator()
         self.harness_evaluator = LMEvalHarnessEvaluator()
@@ -25,9 +26,9 @@ class HyberbeeEvaluator:
         for pair in evaluator_benchmark_pairs:
             try:
                 if 'mt-bench' in pair:
-                    mtbench_benchmarks.append(benchmark_name)
-                if 'flask' in pair:
-                    flask_benchmarks.append(benchmark_name)
+                    mtbench_benchmarks.append("mt-bench")
+                elif 'flask' in pair:
+                    flask_benchmarks.append("flask")
                 else:
                     evaluator_name, benchmark_name = pair.split('/')
                     if evaluator_name == Evaluators.HELM.value:
@@ -41,13 +42,13 @@ class HyberbeeEvaluator:
 
         # Evaluate benchmarks for each evaluator
         if helm_benchmarks:
-            results['HELM'] = self.helm_evaluator.evaluate(model_names, helm_benchmarks, kwargs_helm)
+            results['HELM'] = self.helm_evaluator.evaluate(model_names, helm_benchmarks)
         if lm_eval_harness_benchmarks:
-            results['LM_EVAL_HARNESS'] = self.harness_evaluator.evaluate(model_names, lm_eval_harness_benchmarks, kwargs_lm_eval_harness)
+            results['LM_EVAL_HARNESS'] = self.harness_evaluator.evaluate(model_names, lm_eval_harness_benchmarks)
         if mtbench_benchmarks:
-            results['MTBENCH'] = self.mtbench_evaluator.evaluate(model_names, kwargs_mt_bench)
+            results['MTBENCH'] = self.mtbench_evaluator.evaluate(model_names)
         if flask_benchmarks:
-            results['FLASK'] = self.flask_evaluator.evaluate(model_names, kwargs_mt_bench)
+            results['FLASK'] = self.flask_evaluator.evaluate(model_names)
 
         return results
             

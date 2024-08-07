@@ -1,19 +1,20 @@
 import subprocess
 import glob
 import json
-
+import os
 
 class HelmEvaluator:
-    def evaluate(self, model_names, benchmark_names, max_eval_instances=1000, number_of_threads=2, **kwargs):
-        
+    def evaluate(self, model_names, benchmark_names, max_eval_instances=10, number_of_threads=2, **kwargs):
+        os.chdir("helm")
         results  = {}
 
         for model_name in model_names:
             for benchmark_name in benchmark_names:
+                result = ""
                 try:
                     run_entries_str = f"{benchmark_name}:model={model_name}"
                     suite_name =  f"suite_{model_name}_{benchmark_name}"
-                    suite_folder =  f"helm/benchmark_output/runs/{suite_name}"
+                    suite_folder =  f"benchmark_output/runs/{suite_name}"
             
                     # Start building the command
                     command = ["helm-run", "--run-entries", run_entries_str, "--suite", suite_name, "--max-eval-instances", str(max_eval_instances), "-n", str(number_of_threads)]
@@ -42,10 +43,13 @@ class HelmEvaluator:
 
                 except subprocess.CalledProcessError as e:
                     print(f"Helm evaluation failed for {model_name}. (helm-run)")
-
-            
+                    print(f"Command: {e.cmd}")
+                    print(f"Return Code: {e.returncode}")
+                    print(f"Standard Output: {e.stdout}")
+                    print(f"Standard Error: {e.stderr}")
+                       
         return results
-
+    
     def get_results_from_run_folder(self, run_folder):
         results = {}
         run_spec_file = run_folder + "/run_spec.json"

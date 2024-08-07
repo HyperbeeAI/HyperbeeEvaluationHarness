@@ -28,7 +28,7 @@ class LMEvalHarnessEvaluator:
                     for key, value in kwargs.items():
                         command.extend([f"--{key.replace('_', '-')}", str(value)])
                 result = subprocess.run(command, capture_output=True, text=True)
-                results[model_name] =result
+                results[model_name] =result.stdout
             except subprocess.CalledProcessError as e:
                 print(f"lm-eval-harness evaluation failed for {model_name}.")
         

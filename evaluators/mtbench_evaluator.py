@@ -59,4 +59,4 @@ class MTBenchEvaluator:
         # Use subprocess to run the script with the specified arguments
         _ = subprocess.run(["python"] + args, capture_output=True, text=True)
         result = subprocess.run(["python", "my_mt-bench/show_result.py", "--mode"],"single", capture_output=True, text=True)
-        return result
+        return result.stdout

@@ -13,7 +13,8 @@ class MTBenchEvaluator:
         harness_evaluator = LMEvalHarnessEvaluator()
 
         for model in model_names:
-            harness_evaluator.evaluate(model_names=[model], benchmark_names=["mt_bench_step1", "mt_bench_step2"])
+            harness_evaluator.evaluate(model_names=[model], benchmark_names=["mt_bench_step1"])
+            harness_evaluator.evaluate(model_names=[model], benchmark_names=["mt_bench_step2"])
             judgements = self.generate_judgements()
             results[model] = judgements
         return results
@@ -46,15 +47,14 @@ class MTBenchEvaluator:
 
         # Define the arguments to pass to the script
         args = [
-            "my_mt-bench/gen_judgement.py",
+            "my_mt-bench/gen_judgment.py",
             "--bench-name", "mt_bench",
             "--judge-file", "my_mt-bench/judge_prompts.jsonl",
             "--judge-model", "gpt-4",
             "--baseline-model", "gpt-3.5-turbo",
             "--mode", "single",
             "--model-list", "model0",
-            "--parallel", "2",
-            "--first-n", "10"
+            "--parallel", "2"
         ]
 
         # Use subprocess to run the script with the specified arguments

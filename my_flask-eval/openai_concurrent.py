@@ -21,6 +21,7 @@ from tenacity import (
 )
 
 
+client = openai.OpenAI(api_key="***REMOVED***")
 
 def main():
     API_KEYS = os.environ["OPENAI_API_KEYS"].split(",")
@@ -31,17 +32,15 @@ def main():
     parser.add_argument("--requests-per-minute", type=int, default=60, help="Number of requests per minute per API key")
     parser.add_argument("--expected_response_seconds", type=float, default=5, help="Number of seconds to wait for a response")
     args = parser.parse_args()
-
     openai_concurrent = OpenAIChatCompletionConcurrent(api_keys=API_KEYS, requests_per_minute=args.requests_per_minute, expected_response_seconds=args.expected_response_seconds)
     openai_concurrent.create_many_file(input_path=args.input_path, output_path=args.output_path, fail_path=args.fail_path)
 
 
 class OpenAIChatCompletionConcurrent:
     def __init__(self, api_keys: List[str], requests_per_minute: int = 60, expected_response_seconds: float = 5.0):
-        self.api_keys = api_keys
+        self.api_keys = ["***REMOVED***"]
         self.requests_per_minute = requests_per_minute
         self.expected_response_seconds = expected_response_seconds
-
         self.num_api_keys = len(self.api_keys)
 
         requests_per_second = self.requests_per_minute / 60
@@ -56,7 +55,7 @@ class OpenAIChatCompletionConcurrent:
     @retry(wait=wait_random_exponential(min=1, max=60), stop=stop_after_attempt(6))
     def create(self, model: str, messages: List[dict], temperature: float, max_tokens: int):
         openai.api_key = random.choice(self.api_keys)
-        return openai.ChatCompletion.create(
+        return client.chat.completions.create(
             model=model,
             messages=messages,
             temperature=temperature,
@@ -142,7 +141,7 @@ def call_and_write(api_key: str, item: dict, output_path: str, fail_path: str):
 @retry(wait=wait_random_exponential(min=1, max=60), stop=stop_after_attempt(6), reraise=True)
 def completion_with_backoff(api_key, **kwargs):
     openai.api_key = api_key
-    return openai.ChatCompletion.create(**kwargs)
+    return client.chat.completions.create(**kwargs)
 
 
 if __name__ == "__main__":

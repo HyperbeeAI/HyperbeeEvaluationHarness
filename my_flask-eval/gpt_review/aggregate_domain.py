@@ -25,7 +25,7 @@ with open(file, 'r') as f:
 domain_dict = {}
 cnt=0
 for item in review:
-    for domain in item["domain_labeled"]:
+    for domain in item["domain"]:
         if domain not in domain_dict.keys():
             domain_dict[domain]= [0,0]
         for key, score in item["score"].items():

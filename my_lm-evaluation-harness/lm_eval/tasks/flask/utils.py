@@ -2,11 +2,12 @@ import copy
 import pickle
 flask_results_fname="flask_results.pickle"
 default_step1_template = """A chat between a curious user and an artificial intelligence assistant. The assistant gives helpful, detailed, and polite answers to the user's questions. USER: {instruction} ASSISTANT:"""
-def doc_to_text1(doc):
+def doc_to_text(doc):
     template = default_step1_template
     return template.replace('{instruction}', doc['instruction'])
-
-def process_results1(doc,generations):
+def doc_to_target(doc):
+    return ""
+def process_results(doc,generations):
     try:
         with open(flask_results_fname, 'rb') as handle:
             flask_results = pickle.load(handle)

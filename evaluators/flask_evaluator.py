@@ -25,33 +25,35 @@ class FlaskEvaluator:
         except:
             raise Exception(f"{flask_results_fname} was not found.")
         
+        os.chdir("my_flask-eval")
         
         for qid in range(1,1741):
-            answer = flask_results[qid]
+            answer = flask_results[str(qid)]
             ans_json = {
                     "question_id": qid,
                     "text": answer
             }
-            with open(os.path.expanduser("my_flask-eval/model0.jsonl"), "a") as fout:
+            with open(os.path.expanduser("model0.jsonl"), "a") as fout:
                 fout.write(json.dumps(ans_json) + "\n")
 
 
         # Define the arguments to pass to the script
         args = [
-            "my_flask-eval/gpt_review/gpt4_eval.py",
-            "--key-file", "my_flask-eval/api_info.json",
-            "--question-file", "my_flask-eval/flask_evaluation.jsonl",
-            "--skillset-file", "my_flask-eval/skillset_description.json",
-            "--answer-file", "my_flask-eval/model0.jsonl",
-            "--prompt-file", "my_flask-eval/gpt_review/src/prompt.jsonl",
-            "--reviewer-file", "my_flask-eval/gpt_review/src/reviewer.jsonl",
-            "--output-review-file", "my_flask-eval/review.jsonl",
-            "--output-error-file", "my_flask-eval/error.jsonl",
+            "gpt_review/gpt4_eval.py",
+            "--key-file", "api_info.json",
+            "--question-file", "flask_evaluation.jsonl",
+            "--skillset-file", "skillset_description.json",
+            "--answer-file", "model0.jsonl",
+            "--prompt-file", "gpt_review/src/prompt.jsonl",
+            "--reviewer-file", "gpt_review/src/reviewer.jsonl",
+            "--output-review-file", "review.jsonl",
+            "--output-error-file", "error.jsonl",
             "--max-tokens", "1024"
         ]
 
         # Use subprocess to run the script with the specified arguments
         result = subprocess.run(["python"] + args, capture_output=True, text=True)
+        os.chdir("..")
         return result.stdout
     
     def aggregate_results(self, reviews_fname="my_flask-eval/review.jsonl"):

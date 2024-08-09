@@ -22,7 +22,7 @@ with open(file, 'r') as f:
         review.append(json.loads(line))
 
 difficulty = []
-with open('../evaluation_set/flask_evaluation.jsonl', 'r') as f2:
+with open('my_flask-eval/flask_evaluation.jsonl', 'r') as f2:
     for line in f2:
         difficulty.append(json.loads(line))
 
@@ -40,7 +40,7 @@ difficulty_dict = {}
 cnt=0
 for index, item in enumerate(review):
 
-    level = difficulty[index]["difficulty_labeled"]
+    level = difficulty[index]["difficulty"]
     if len(item["score"])!=3:
         print("length issue!!!", item["score"], item )
     for key, score in item["score"].items():

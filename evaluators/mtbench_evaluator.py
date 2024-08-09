@@ -3,7 +3,8 @@ import time
 import os
 import json
 import subprocess
-from lm_eval_harness_evaluator import LMEvalHarnessEvaluator
+from evaluators.lm_eval_harness_evaluator import LMEvalHarnessEvaluator
+from common_methods import run_command_and_print
 
 
 class MTBenchEvaluator:
@@ -57,6 +58,6 @@ class MTBenchEvaluator:
         ]
 
         # Use subprocess to run the script with the specified arguments
-        _ = subprocess.run(["python"] + args, capture_output=True, text=True)
-        result = subprocess.run(["python", "my_mt-bench/show_result.py", "--mode"],"single", capture_output=True, text=True)
-        return result.stdout
+        _ = run_command_and_print(["python"] + args)
+        result = run_command_and_print(["python", "my_mt-bench/show_result.py", "--mode", mode])
+        return result

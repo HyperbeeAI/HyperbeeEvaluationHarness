@@ -1,7 +1,6 @@
-import subprocess
 import glob
 import os
-
+from common_methods import run_command_and_print
 class LMEvalHarnessEvaluator:
     def evaluate(self, model_names, benchmark_names, **kwargs):
         results  = {}
@@ -28,16 +27,15 @@ class LMEvalHarnessEvaluator:
                 if "openai" in model_name or "anthropic" in model_name:
                     command.extend(["--apply_chat_template"])
                 # Add other keyword arguments
+                
                 if kwargs:
                     for key, value in kwargs.items():
                         command.extend([f"--{key.replace('_', '-')}", str(value)])
-                result = subprocess.run(command, capture_output=True, text=True)
-                results[model_name] =result.stdout
-            except subprocess.CalledProcessError as e:
+                    
+                result = run_command_and_print(command)
+                
+                results[model_name] =result
+            except:
                 print(f"lm-eval-harness evaluation failed for {model_name}.")
-                print(f"Command: {e.cmd}")
-                print(f"Return Code: {e.returncode}")
-                print(f"Standard Output: {e.stdout}")
-                print(f"Standard Error: {e.stderr}")
-        
+        os.chdir("..")
         return results

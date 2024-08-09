@@ -3,8 +3,9 @@ import time
 import os
 import json
 import subprocess
-from lm_eval_harness_evaluator import LMEvalHarnessEvaluator
+from evaluators.lm_eval_harness_evaluator import LMEvalHarnessEvaluator
 import pandas as pd
+from common_methods import run_command_and_print
 
 class FlaskEvaluator:
     def evaluate(self, model_names, **kwargs):
@@ -52,14 +53,14 @@ class FlaskEvaluator:
         ]
 
         # Use subprocess to run the script with the specified arguments
-        result = subprocess.run(["python"] + args, capture_output=True, text=True)
+        result = run_command_and_print(["python"] + args)
         os.chdir("..")
         return result.stdout
     
     def aggregate_results(self, reviews_fname="my_flask-eval/review.jsonl"):
-        _ = subprocess.run(["python", "my_flask-eval/gpt_review/aggregate_difficulty_skill.py", "-m", reviews_fname], capture_output=True, text=True)
-        _ = subprocess.run(["python", "my_flask-eval/gpt_review/aggregate_domain.py", "-m", reviews_fname], capture_output=True, text=True)
-        _ = subprocess.run(["python", "my_flask-eval/gpt_review/aggregate_skill.py", "-m", reviews_fname], capture_output=True, text=True)
+        _ = run_command_and_print(["python", "my_flask-eval/gpt_review/aggregate_difficulty_skill.py", "-m", reviews_fname])
+        _ = run_command_and_print(["python", "my_flask-eval/gpt_review/aggregate_domain.py", "-m", reviews_fname])
+        _ = run_command_and_print(["python", "my_flask-eval/gpt_review/aggregate_skill.py", "-m", reviews_fname])
 
         ds_df = pd.read_csv("my_flask-eval/review_difficulty_skill.csv")
         d_df = pd.read_csv("my_flask-eval/review_domain.csv")

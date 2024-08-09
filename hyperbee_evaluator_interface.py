@@ -1,8 +1,9 @@
 from enum import Enum
-from helm_evaluator import HelmEvaluator
-from lm_eval_harness_evaluator import LMEvalHarnessEvaluator
-from mtbench_evaluator import MTBenchEvaluator
-from flask_evaluator import FlaskEvaluator
+from evaluators.helm_evaluator import HelmEvaluator
+from evaluators.lm_eval_harness_evaluator import LMEvalHarnessEvaluator
+from evaluators.mtbench_evaluator import MTBenchEvaluator
+from evaluators.flask_evaluator import FlaskEvaluator
+import argparse
 class Evaluators(Enum):
     HELM = "helm"
     LM_EVAL_HARNESS = "lm_eval_harness"
@@ -16,14 +17,14 @@ class HyperbeeEvaluator:
         self.mtbench_evaluator = MTBenchEvaluator()
         self.flask_evaluator = FlaskEvaluator()
     
-    def evaluate(self, model_names, evaluator_benchmark_pairs, kwargs_helm=None, kwargs_lm_eval_harness=None, kwargs_mt_bench=None):
+    def evaluate(self, model_names, tasks, kwargs_helm=None, kwargs_lm_eval_harness=None, kwargs_mt_bench=None):
         results = {}
         
         helm_benchmarks = []
         lm_eval_harness_benchmarks = []
         mtbench_benchmarks = []
         flask_benchmarks = []
-        for pair in evaluator_benchmark_pairs:
+        for pair in tasks:
             try:
                 if 'mt-bench' in pair:
                     mtbench_benchmarks.append("mt-bench")
@@ -53,4 +54,20 @@ class HyperbeeEvaluator:
         return results
             
 
+def main():
+    parser = argparse.ArgumentParser(description="Evaluate models using various benchmarks.")
+    parser.add_argument('--model_names', nargs='+', required=True, help="List of model names to evaluate.")
+    parser.add_argument('--tasks', nargs='+', required=True, help="List of tasks.")
+   
+    args = parser.parse_args()
 
+    evaluator = HyperbeeEvaluator()
+    results = evaluator.evaluate(
+        model_names=args.model_names,
+        tasks=args.tasks,
+    )
+
+    print(results)
+
+if __name__ == "__main__":
+    main()

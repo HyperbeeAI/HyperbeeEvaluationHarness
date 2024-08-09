@@ -1,4 +1,4 @@
-import subprocess
+from common_methods import run_command_and_print
 import glob
 import json
 import os
@@ -31,23 +31,14 @@ class HelmEvaluator:
                             else:
                                 command.append(str(value))
                     
-                    result = subprocess.run(
-                        command,
-                        capture_output=True,
-                        text=True,
-                        check=True
-                    )
+                    result = run_command_and_print(command)
                     for run_folder in glob.glob(f"{suite_folder}/*:*"):
                         if benchmark_name in run_folder:
                             results[suite_name] = self.get_results_from_run_folder(run_folder)
 
                 except subprocess.CalledProcessError as e:
                     print(f"Helm evaluation failed for {model_name}. (helm-run)")
-                    print(f"Command: {e.cmd}")
-                    print(f"Return Code: {e.returncode}")
-                    print(f"Standard Output: {e.stdout}")
-                    print(f"Standard Error: {e.stderr}")
-                       
+        os.chdir("..")               
         return results
     
     def get_results_from_run_folder(self, run_folder):

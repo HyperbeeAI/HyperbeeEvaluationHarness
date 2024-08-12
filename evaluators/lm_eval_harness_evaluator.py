@@ -33,8 +33,8 @@ class LMEvalHarnessEvaluator:
                         command.extend([f"--{key.replace('_', '-')}", str(value)])
                     
                 result = run_command_and_print(command)
-                
-                results[model_name] =result
+                result = result.split("gen_kwargs:")[-1]
+                results[model_name] = result[result.find("Tasks"):]
             except:
                 print(f"lm-eval-harness evaluation failed for {model_name}.")
                 results[model_name] = "ERRORs"

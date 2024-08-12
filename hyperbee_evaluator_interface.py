@@ -5,6 +5,7 @@ from evaluators.mtbench_evaluator import MTBenchEvaluator
 from evaluators.flask_evaluator import FlaskEvaluator
 import argparse
 import json
+import time
 class Evaluators(Enum):
     HELM = "helm"
     LM_EVAL_HARNESS = "lm_eval_harness"
@@ -84,7 +85,7 @@ def main():
         tasks=args.tasks,
     )
     print(json.dumps(results, indent=2))
-    with open(f"results_{str(args.model_names)}_{args.tasks}.json", "w") as outfile: 
+    with open(f"results_{str(time.time())}.json", "w") as outfile: 
         json.dump(results, outfile,indent=2)
 
 if __name__ == "__main__":

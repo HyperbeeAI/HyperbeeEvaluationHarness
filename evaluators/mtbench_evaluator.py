@@ -13,10 +13,14 @@ class MTBenchEvaluator:
         harness_evaluator = LMEvalHarnessEvaluator()
 
         for model in model_names:
-            harness_evaluator.evaluate(model_names=[model], benchmark_names=["mt_bench_step1"])
-            harness_evaluator.evaluate(model_names=[model], benchmark_names=["mt_bench_step2"])
-            judgements = self.generate_judgements()
-            results[model] = judgements
+            try:
+                harness_evaluator.evaluate(model_names=[model], benchmark_names=["mt_bench_step1"])
+                harness_evaluator.evaluate(model_names=[model], benchmark_names=["mt_bench_step2"])
+                judgements = self.generate_judgements()
+                results[model] = judgements
+            except:
+                 print(f"Error on mt-bench_{model}")
+                 results[model] = "ERROR"
         return results
     
     def generate_judgements(self, mode="single", step_one_results_fname="lm-evaluation-harness/mt_bench_step1_results.pickle", step_two_results_fname="lm-evaluation-harness/mt_bench_step2_results.pickle"):

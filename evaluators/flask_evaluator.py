@@ -13,10 +13,14 @@ class FlaskEvaluator:
         harness_evaluator = LMEvalHarnessEvaluator()
 
         for model in model_names:
-            harness_evaluator.evaluate(model_names=[model], benchmark_names=["flask"])
-            _ = self.generate_reviews()
+            try:
+                harness_evaluator.evaluate(model_names=[model], benchmark_names=["flask"])
+                _ = self.generate_reviews()
 
-            results[model] = self.aggregate_results()
+                results[model] = self.aggregate_results()
+            except:
+                print(f"Error on flask_{model}")
+                results[model] = "ERROR"
         return results
     
     def generate_reviews(self, flask_results_fname="lm-evaluation-harness/flask_results.pickle"):

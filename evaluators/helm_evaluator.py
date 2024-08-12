@@ -9,6 +9,7 @@ class HelmEvaluator:
         results  = {}
 
         for model_name in model_names:
+            model_results={}
             for benchmark_name in benchmark_names:
                 result = ""
                 try:
@@ -34,11 +35,13 @@ class HelmEvaluator:
                     result = run_command_and_print(command)
                     for run_folder in glob.glob(f"{suite_folder}/*:*"):
                         if benchmark_name in run_folder:
-                            results[suite_name] = self.get_results_from_run_folder(run_folder)
-
-                except subprocess.CalledProcessError as e:
-                    print(f"Helm evaluation failed for {model_name}. (helm-run)")
+                            model_results[benchmark_name] = self.get_results_from_run_folder(run_folder)
+                except:
+                    print(f"Error on helm_{model_name}_{benchmark_name}")
+                    model_results[benchmark_name] = "ERROR"
+            results[model_name] = model_results
         os.chdir("..")               
+
         return results
     
     def get_results_from_run_folder(self, run_folder):

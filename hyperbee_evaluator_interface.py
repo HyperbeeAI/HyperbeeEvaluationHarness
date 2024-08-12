@@ -4,6 +4,7 @@ from evaluators.lm_eval_harness_evaluator import LMEvalHarnessEvaluator
 from evaluators.mtbench_evaluator import MTBenchEvaluator
 from evaluators.flask_evaluator import FlaskEvaluator
 import argparse
+import json
 class Evaluators(Enum):
     HELM = "helm"
     LM_EVAL_HARNESS = "lm_eval_harness"
@@ -43,13 +44,29 @@ class HyperbeeEvaluator:
 
         # Evaluate benchmarks for each evaluator
         if helm_benchmarks:
-            results['HELM'] = self.helm_evaluator.evaluate(model_names, helm_benchmarks)
+            try:
+                results['HELM'] = self.helm_evaluator.evaluate(model_names, helm_benchmarks)
+            except:
+                print("Problem Occured during helm evaluation.")
+                results['HELM'] = "ERROR"
         if lm_eval_harness_benchmarks:
-            results['LM_EVAL_HARNESS'] = self.harness_evaluator.evaluate(model_names, lm_eval_harness_benchmarks)
+            try:
+                results['LM_EVAL_HARNESS'] = self.harness_evaluator.evaluate(model_names, lm_eval_harness_benchmarks)
+            except:
+                print("Problem Occured during lm-eval-harness evaluation.")
+                results['LM_EVAL_HARNESS'] = "ERROR"
         if mtbench_benchmarks:
-            results['MTBENCH'] = self.mtbench_evaluator.evaluate(model_names)
+            try:
+                results['MTBENCH'] = self.mtbench_evaluator.evaluate(model_names)
+            except:
+                print("Problem Occured during mt-bench evaluation.")
+                results['MTBENCH'] = "ERROR"
         if flask_benchmarks:
-            results['FLASK'] = self.flask_evaluator.evaluate(model_names)
+            try:
+                results['FLASK'] = self.flask_evaluator.evaluate(model_names)
+            except:
+                print("Problem Occured during flask evaluation.")
+                results['FLASK'] = "ERROR"
 
         return results
             
@@ -66,8 +83,9 @@ def main():
         model_names=args.model_names,
         tasks=args.tasks,
     )
-
-    print(results)
+    print(json.dumps(results, indent=2))
+    with open(f"results_{str(args.model_names)}_{args.tasks}.json", "w") as outfile: 
+        json.dump(results, outfile,indent=2)
 
 if __name__ == "__main__":
     main()

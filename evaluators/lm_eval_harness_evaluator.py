@@ -37,5 +37,6 @@ class LMEvalHarnessEvaluator:
                 results[model_name] =result
             except:
                 print(f"lm-eval-harness evaluation failed for {model_name}.")
+                results[model_name] = "ERRORs"
         os.chdir("..")
         return results

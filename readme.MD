@@ -1,5 +1,5 @@
 # Hyberbee Evaluation Repo
-## Quick Start:
+## Quick Start
     **Installation**
     ```
     git clone --recurse-submodules https://github.com/HyperbeeAI/HyperbeeEvaluationHarness.git

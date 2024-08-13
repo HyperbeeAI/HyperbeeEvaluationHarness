@@ -8,7 +8,7 @@ bash install_all_modules.sh
 ```
 **Activate the environment and set api variables**
 ```
-python3 -m virtualenv -p python3.8 hyperbee-eval-venv
+source hyperbee-eval-venv/bin/activate
 export OPENAI_API_KEY=sk********x
 ```
 

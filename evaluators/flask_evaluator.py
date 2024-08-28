@@ -6,7 +6,7 @@ import subprocess
 from evaluators.lm_eval_harness_evaluator import LMEvalHarnessEvaluator
 import pandas as pd
 from common_methods import run_command_and_print
-
+import traceback
 class FlaskEvaluator:
     def evaluate(self, model_names, **kwargs):
         results  = {}
@@ -20,6 +20,7 @@ class FlaskEvaluator:
                 results[model] = self.aggregate_results()
             except:
                 print(f"Error on flask_{model}")
+                traceback.print_exc()
                 results[model] = "ERROR"
         return results
     
@@ -59,7 +60,7 @@ class FlaskEvaluator:
         # Use subprocess to run the script with the specified arguments
         result = run_command_and_print(["python"] + args)
         os.chdir("..")
-        return result.stdout
+        return result
     
     def aggregate_results(self, reviews_fname="my_flask-eval/review.jsonl"):
         _ = run_command_and_print(["python", "my_flask-eval/gpt_review/aggregate_difficulty_skill.py", "-m", reviews_fname])

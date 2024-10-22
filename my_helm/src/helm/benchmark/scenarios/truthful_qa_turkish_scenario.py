@@ -3,6 +3,7 @@ from typing import Dict, List
 from helm.common.hierarchical_logger import hlog
 from .scenario import Scenario, Instance, Reference, TRAIN_SPLIT, TEST_SPLIT, CORRECT_TAG, Input, Output
 from datasets import load_dataset
+import os
 
 class TruthfulQATScenario(Scenario):
     name = "truthful_qat"
@@ -37,7 +38,7 @@ class TruthfulQATScenario(Scenario):
 
     def get_instances(self, output_path: str) -> List[Instance]:
         # Download the raw data
-        dataset = load_dataset("mukayese/truthful_qa-tr", token="***REMOVED***")
+        dataset = load_dataset("mukayese/truthful_qa-tr", token=os.getenv("HF_TOKEN"))
 
         # Read all the instances
         instances: List[Instance] = []

@@ -36,7 +36,7 @@ class GSM8KTScenario(Scenario):
 
     def get_instances(self, output_path: str) -> List[Instance]:
         splits = {"test": TEST_SPLIT}
-        dataset = load_dataset("mukayese/gsm8k-tr", split= "test", token="***REMOVED***")
+        dataset = load_dataset("mukayese/gsm8k-tr", split= "test", token=os.getenv("HF_TOKEN"))
         instances: List[Instance] = []
         
         for split, split_tag in splits.items():  # Iterate over the splits

@@ -3,7 +3,7 @@ from typing import Dict, List
 from helm.common.hierarchical_logger import hlog
 from .scenario import Scenario, Instance, Reference, TRAIN_SPLIT, TEST_SPLIT, CORRECT_TAG, Input, Output
 from datasets import load_dataset
-
+import os
 class MMLUTScenario(Scenario):
     name = "mmlut"
     description = "Massive Multitask Language Understanding Turkish"
@@ -37,7 +37,7 @@ class MMLUTScenario(Scenario):
 
     def get_instances(self, output_path: str) -> List[Instance]:
         # Download the raw data
-        dataset = load_dataset("HyperbeeAI/mmlu_turkish", self.subject, token="***REMOVED***")
+        dataset = load_dataset("HyperbeeAI/mmlu_turkish", self.subject, token=os.getenv("HF_TOKEN"))
 
         # Read all the instances
         instances: List[Instance] = []

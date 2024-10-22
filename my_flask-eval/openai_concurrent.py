@@ -21,7 +21,7 @@ from tenacity import (
 )
 
 
-client = openai.OpenAI(api_key="***REMOVED***")
+client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 def main():
     API_KEYS = os.environ["OPENAI_API_KEYS"].split(",")
@@ -38,7 +38,7 @@ def main():
 
 class OpenAIChatCompletionConcurrent:
     def __init__(self, api_keys: List[str], requests_per_minute: int = 60, expected_response_seconds: float = 5.0):
-        self.api_keys = ["***REMOVED***"]
+        self.api_keys = [os.getenv("OPENAI_API_KEY")]
         self.requests_per_minute = requests_per_minute
         self.expected_response_seconds = expected_response_seconds
         self.num_api_keys = len(self.api_keys)
